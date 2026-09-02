@@ -1,0 +1,40 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+
+# Visual Studio
+.vs/
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+
+# .NET tooling
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+coverage/
+artifacts/
+packages/
+*.nupkg
+*.snupkg
+
+# ASP.NET / local configuration
+appsettings.Local.json
+appsettings.*.Local.json
+secrets.json
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
