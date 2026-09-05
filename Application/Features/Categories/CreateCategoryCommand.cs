@@ -4,21 +4,16 @@ using MediatR;
 
 namespace Application.Features.Categories;
 
-public record CreateCategoryCommand(Guid userId, string Name, string HexColor): IRequest<Guid>;
+public abstract record CreateCategoryCommand(Guid UserId, string Name, string HexColor) : IRequest<Guid>;
 
-public class CreateCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, Guid>
+public class CreateCategoryCommandHandler(ICategoryRepository categoryRepository)
+    : IRequestHandler<CreateCategoryCommand, Guid>
 {
-    private readonly ICategoryRepository _categoryRepository;
-
-    public CreateCategoryCommandHandler(ICategoryRepository categoryRepository)
-    {
-        _categoryRepository = categoryRepository;
-    }
     public async Task<Guid> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
-        var category = Category.Create(request.userId, request.Name, request.HexColor);
+        var category = Category.Create(request.UserId, request.Name, request.HexColor);
 
-        await _categoryRepository.AddAsync(category, cancellationToken);
+        await categoryRepository.AddAsync(category, cancellationToken);
         return category.Id;
     }
 }

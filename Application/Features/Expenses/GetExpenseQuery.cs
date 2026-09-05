@@ -4,19 +4,13 @@ using MediatR;
 
 namespace Application.Features.Expenses;
 
-public record GetExpensesQuery(Guid UserId) : IRequest<IEnumerable<Expense>>;
+public abstract record GetExpensesQuery(Guid UserId) : IRequest<IEnumerable<Expense>>;
 
-public class GetExpensesQueryHandler : IRequestHandler<GetExpensesQuery, IEnumerable<Expense>>
+public class GetExpensesQueryHandler(IExpenseRepository expenseRepository)
+    : IRequestHandler<GetExpensesQuery, IEnumerable<Expense>>
 {
-    private readonly IExpenseRepository _expenseRepository;
-
-    public GetExpensesQueryHandler(IExpenseRepository expenseRepository)
-    {
-        _expenseRepository = expenseRepository;
-    }
-
     public async Task<IEnumerable<Expense>> Handle(GetExpensesQuery request, CancellationToken cancellationToken)
     {
-        return await _expenseRepository.GetAllByUserIdAsync(request.UserId, cancellationToken);
+        return await expenseRepository.GetAllByUserIdAsync(request.UserId, cancellationToken);
     }
 }

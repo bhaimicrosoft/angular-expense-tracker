@@ -6,26 +6,19 @@ using MediatR;
 namespace Application.Features.Budgets;
 
 // Payload (Command)
-public record CreateBudgetCommand(Guid userId, Guid categoryId, decimal Amount, string Currency, int Month, int Year): IRequest<Guid>;
+public abstract record CreateBudgetCommand(Guid UserId, Guid CategoryId, decimal Amount, string Currency, int Month, int Year) : IRequest<Guid>;
 
 
 
 // Behavior
-public class CreateBudgetCommandHandler : IRequestHandler<CreateBudgetCommand, Guid>
+public class CreateBudgetCommandHandler(IBudgetRepository budgetRepo) : IRequestHandler<CreateBudgetCommand, Guid>
 {
-    private readonly IBudgetRepository _budgetRepo;
-
-    public CreateBudgetCommandHandler(IBudgetRepository budgetRepo)
-    {
-        _budgetRepo = budgetRepo;
-    }
-    
     public async Task<Guid> Handle(CreateBudgetCommand request, CancellationToken cancellationToken)
     {
         var limit = Money.Create(request.Amount, request.Currency);
-        var budget = Budget.Create(request.userId, request.categoryId, limit, request.Month, request.Year);
+        var budget = Budget.Create(request.UserId, request.CategoryId, limit, request.Month, request.Year);
 
-        await _budgetRepo.AddAsync(budget, cancellationToken);
+        await budgetRepo.AddAsync(budget, cancellationToken);
         return budget.Id;
     }
 }

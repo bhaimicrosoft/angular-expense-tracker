@@ -4,19 +4,12 @@ using MediatR;
 
 namespace Application.Features.Users;
 
-public record GetUserByIdQuery(Guid UserId) : IRequest<User?>;
+public abstract record GetUserByIdQuery(Guid UserId) : IRequest<User?>;
 
-public class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery, User?>
+public class GetUserByIdQueryHandler(IUserRepository userRepository) : IRequestHandler<GetUserByIdQuery, User?>
 {
-    private readonly IUserRepository _userRepository;
-
-    public GetUserByIdQueryHandler(IUserRepository userRepository)
-    {
-        _userRepository = userRepository;
-    }
-
     public async Task<User?> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _userRepository.GetByIdAsync(request.UserId, cancellationToken);
+        return await userRepository.GetByIdAsync(request.UserId, cancellationToken);
     }
 }
