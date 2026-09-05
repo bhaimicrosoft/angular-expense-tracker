@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Features.Users;
 
-public abstract record CreateUserCommand(string Email, string FullName) : IRequest<Guid>;
+public record CreateUserCommand(string Email, string FullName) : IRequest<Guid>;
 
 public class CreateUserCommandHandler(IUserRepository userRepository) : IRequestHandler<CreateUserCommand, Guid>
 {

@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Features.Categories;
 
-public abstract record CreateCategoryCommand(Guid UserId, string Name, string HexColor) : IRequest<Guid>;
+public record CreateCategoryCommand(Guid UserId, string Name, string HexColor) : IRequest<Guid>;
 
 public class CreateCategoryCommandHandler(ICategoryRepository categoryRepository)
     : IRequestHandler<CreateCategoryCommand, Guid>

@@ -6,7 +6,7 @@ using MediatR;
 namespace Application.Features.Budgets;
 
 // Payload (Command)
-public abstract record CreateBudgetCommand(Guid UserId, Guid CategoryId, decimal Amount, string Currency, int Month, int Year) : IRequest<Guid>;
+public record CreateBudgetCommand(Guid UserId, Guid CategoryId, decimal Amount, string Currency, int Month, int Year) : IRequest<Guid>;
 
 
 

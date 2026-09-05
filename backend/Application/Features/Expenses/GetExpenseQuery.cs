@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Features.Expenses;
 
-public abstract record GetExpensesQuery(Guid UserId) : IRequest<IEnumerable<Expense>>;
+public record GetExpensesQuery(Guid UserId) : IRequest<IEnumerable<Expense>>;
 
 public class GetExpensesQueryHandler(IExpenseRepository expenseRepository)
     : IRequestHandler<GetExpensesQuery, IEnumerable<Expense>>

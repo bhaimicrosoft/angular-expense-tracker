@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Features.Categories;
 
-public abstract record GetUserCategoriesQuery(Guid UserId): IRequest<IEnumerable<Category>>;
+public record GetUserCategoriesQuery(Guid UserId): IRequest<IEnumerable<Category>>;
 
 
 public class GetUserCategoriesQueryHandler(ICategoryRepository categoryRepository)

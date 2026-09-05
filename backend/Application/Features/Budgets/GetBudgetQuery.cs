@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Features.Budgets;
 
-public abstract record GetBudgetQuery(Guid CategoryId, int Month, int Year) : IRequest<Budget?>;
+public record GetBudgetQuery(Guid CategoryId, int Month, int Year) : IRequest<Budget?>;
 
 public class GetBudgetQueryHandler(IBudgetRepository budgetRepo) : IRequestHandler<GetBudgetQuery, Budget?>
 {

@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Features.Expenses;
 
-public abstract record CreateExpenseCommand(
+public record CreateExpenseCommand(
     Guid UserId,
     string Title,
     decimal Amount,

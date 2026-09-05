@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Features.Users;
 
-public abstract record GetUserByIdQuery(Guid UserId) : IRequest<User?>;
+public record GetUserByIdQuery(Guid UserId) : IRequest<User?>;
 
 public class GetUserByIdQueryHandler(IUserRepository userRepository) : IRequestHandler<GetUserByIdQuery, User?>
 {

@@ -19,6 +19,15 @@ builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 
+// Automatic Database Generation
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AppDbContext>();
+    context.Database.Migrate();
+}
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
