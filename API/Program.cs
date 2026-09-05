@@ -1,4 +1,7 @@
+using Application;
 using Infrastructure;
+using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,9 @@ builder.Services.AddOpenApi();
 
 // Register Infrastructure Layer 
 builder.Services.AddInfrastructureServices(builder.Configuration);
+
+// Register Application Layer
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 
