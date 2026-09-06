@@ -6,7 +6,7 @@ namespace Application.Features.Expenses;
 
 public record GetExpensesQuery(Guid UserId) : IRequest<IEnumerable<Expense>>;
 
-public class GetExpensesQueryHandler(IExpenseRepository expenseRepository)
+internal class GetExpensesQueryHandler(IExpenseRepository expenseRepository)
     : IRequestHandler<GetExpensesQuery, IEnumerable<Expense>>
 {
     public async Task<IEnumerable<Expense>> Handle(GetExpensesQuery request, CancellationToken cancellationToken)

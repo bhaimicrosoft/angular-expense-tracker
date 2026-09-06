@@ -6,7 +6,7 @@ namespace Application.Features.Users;
 
 public record GetUserByIdQuery(Guid UserId) : IRequest<User?>;
 
-public class GetUserByIdQueryHandler(IUserRepository userRepository) : IRequestHandler<GetUserByIdQuery, User?>
+internal class GetUserByIdQueryHandler(IUserRepository userRepository) : IRequestHandler<GetUserByIdQuery, User?>
 {
     public async Task<User?> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {

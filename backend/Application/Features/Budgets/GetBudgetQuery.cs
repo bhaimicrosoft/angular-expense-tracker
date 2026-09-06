@@ -6,7 +6,7 @@ namespace Application.Features.Budgets;
 
 public record GetBudgetQuery(Guid CategoryId, int Month, int Year) : IRequest<Budget?>;
 
-public class GetBudgetQueryHandler(IBudgetRepository budgetRepo) : IRequestHandler<GetBudgetQuery, Budget?>
+internal class GetBudgetQueryHandler(IBudgetRepository budgetRepo) : IRequestHandler<GetBudgetQuery, Budget?>
 {
     public async Task<Budget?> Handle(GetBudgetQuery request, CancellationToken cancellationToken)
     {

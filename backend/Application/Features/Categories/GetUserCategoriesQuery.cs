@@ -7,7 +7,7 @@ namespace Application.Features.Categories;
 public record GetUserCategoriesQuery(Guid UserId): IRequest<IEnumerable<Category>>;
 
 
-public class GetUserCategoriesQueryHandler(ICategoryRepository categoryRepository)
+internal class GetUserCategoriesQueryHandler(ICategoryRepository categoryRepository)
     : IRequestHandler<GetUserCategoriesQuery, IEnumerable<Category>>
 {
     public async Task<IEnumerable<Category>> Handle(GetUserCategoriesQuery request, CancellationToken cancellationToken)

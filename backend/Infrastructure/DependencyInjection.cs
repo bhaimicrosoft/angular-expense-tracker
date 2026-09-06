@@ -1,4 +1,6 @@
+using Application.Interfaces;
 using Domain.Repositories;
+using Infrastructure.Authentication;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -23,7 +25,8 @@ public static class DependencyInjection
         services.AddScoped<IExpenseRepository, ExpenseRepository>();
         services.AddScoped<IBudgetRepository, BudgetRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
-
+        // Register the JwtProvider
+        services.AddScoped<IJwtProvider, JwtProvider>();
 
         return services;
     }

@@ -16,11 +16,11 @@ public class CategoriesController(ISender sender) : ControllerBase
         var categoryId = await _sender.Send(command, cancellationToken);
         
         // Return 201 Created with the location of the newly created category
-        return CreatedAtAction(nameof(GetCategory), new { id = categoryId }, null);
+        return CreatedAtAction(nameof(GetCategory), new { userId = command.UserId }, new { Id = categoryId });
     }
 
     // http:localhost/api/categories/user/{userId}
-    [HttpGet("user/{userId:guid}")]
+    [HttpGet("user/{userId:guid}", Name = nameof(GetCategory))]
     public async Task<IActionResult> GetCategory(Guid userId)
     {
         var categories = await _sender.Send(new GetUserCategoriesQuery(userId));
