@@ -15,9 +15,40 @@ public class ExpenseRepository(AppDbContext context): IExpenseRepository
                 cancellationToken);
     }
 
-    public async Task<IEnumerable<Expense>> GetAllByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<(IReadOnlyList<Expense> Items, int TotalCount)> GetByUserIdAsync(
+        Guid userId,
+        Guid? categoryId = null,
+        DateTime? fromDateUtc = null,
+        DateTime? toDateUtc = null,
+        int page = 1,
+        int pageSize = 20,
+        CancellationToken cancellationToken = default)
     {
-        return await context.Expenses.AsNoTracking().Where(e => e.UserId == userId).ToListAsync(cancellationToken);
+        var query = context.Expenses.AsNoTracking().Where(e => e.UserId == userId);
+
+        if (categoryId.HasValue)
+        {
+            query = query.Where(e => e.CategoryId == categoryId.Value);
+        }
+
+        if (fromDateUtc.HasValue)
+        {
+            query = query.Where(e => e.ExpenseDateUtc >= fromDateUtc.Value);
+        }
+
+        if (toDateUtc.HasValue)
+        {
+            query = query.Where(e => e.ExpenseDateUtc <= toDateUtc.Value);
+        }
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
+            .OrderByDescending(e => e.ExpenseDateUtc)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
     }
 
     public async Task AddAsync(Expense expense, CancellationToken cancellationToken = default)

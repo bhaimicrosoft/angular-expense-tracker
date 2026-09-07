@@ -6,7 +6,14 @@ public interface IIncomeRepository
 {
     Task<Income?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<IEnumerable<Income>> GetAllByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
+    Task<(IReadOnlyList<Income> Items, int TotalCount)> GetByUserIdAsync(
+        Guid userId,
+        Guid? categoryId = null,
+        DateTime? fromDateUtc = null,
+        DateTime? toDateUtc = null,
+        int page = 1,
+        int pageSize = 20,
+        CancellationToken cancellationToken = default);
 
     Task AddAsync(Income income, CancellationToken cancellationToken = default);
 

@@ -1,3 +1,4 @@
+using API.Contracts;
 using Application.Features.Users;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -21,7 +22,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Login([FromBody] LoginCommand command)
     {
         var token = await _sender.Send(command);
-        return Ok(new { Token = token });
+        return Ok(new LoginResponse(token));
     }
     
     [HttpPost("register")]
@@ -29,6 +30,6 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Register([FromBody] CreateUserCommand command)
     {
         var userId = await _sender.Send(command);
-        return Ok(new { UserId = userId });
+        return Created("/api/me", new CreateResourceResponse(userId));
     }
 }

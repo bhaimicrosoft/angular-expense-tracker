@@ -14,9 +14,40 @@ public class IncomeRepository(AppDbContext context) : IIncomeRepository
             .FirstOrDefaultAsync(i => i.Id == id, cancellationToken);
     }
 
-    public async Task<IEnumerable<Income>> GetAllByUserIdAsync(Guid userId, CancellationToken cancellationToken = default)
+    public async Task<(IReadOnlyList<Income> Items, int TotalCount)> GetByUserIdAsync(
+        Guid userId,
+        Guid? categoryId = null,
+        DateTime? fromDateUtc = null,
+        DateTime? toDateUtc = null,
+        int page = 1,
+        int pageSize = 20,
+        CancellationToken cancellationToken = default)
     {
-        return await context.Incomes.AsNoTracking().Where(i => i.UserId == userId).ToListAsync(cancellationToken);
+        var query = context.Incomes.AsNoTracking().Where(i => i.UserId == userId);
+
+        if (categoryId.HasValue)
+        {
+            query = query.Where(i => i.CategoryId == categoryId.Value);
+        }
+
+        if (fromDateUtc.HasValue)
+        {
+            query = query.Where(i => i.IncomeDateUtc >= fromDateUtc.Value);
+        }
+
+        if (toDateUtc.HasValue)
+        {
+            query = query.Where(i => i.IncomeDateUtc <= toDateUtc.Value);
+        }
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
+            .OrderByDescending(i => i.IncomeDateUtc)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
     }
 
     public async Task AddAsync(Income income, CancellationToken cancellationToken = default)

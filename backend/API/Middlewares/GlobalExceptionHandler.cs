@@ -33,6 +33,12 @@ public class GlobalExceptionHandler : IExceptionHandler
             problemDetails.Detail = "One or more validation rules failed.";
             problemDetails.Extensions["errors"] = validationException.Errors;
         }
+        else if (exception is UnauthorizedAccessException)
+        {
+            problemDetails.Title = "Unauthorized";
+            problemDetails.Status = StatusCodes.Status401Unauthorized;
+            problemDetails.Detail = exception.Message;
+        }
 
         // 4. Handle massive database crashes or unexpected bugs 
         else

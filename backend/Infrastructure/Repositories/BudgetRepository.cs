@@ -8,10 +8,10 @@ namespace Infrastructure.Repositories;
 
 public class BudgetRepository(AppDbContext context) : IBudgetRepository
 {
-    public async Task<Budget?> GetByCategoryAndDateAsync(Guid categoryId, int month, int year, CancellationToken cancellationToken = default)
+    public async Task<Budget?> GetByCategoryAndDateAsync(Guid userId, Guid categoryId, int month, int year, CancellationToken cancellationToken = default)
     {
         return await context.Budgets.AsNoTracking()
-            .FirstOrDefaultAsync(b => b.CategoryId == categoryId && b.Month == month && b.Year == year,
+            .FirstOrDefaultAsync(b => b.UserId == userId && b.CategoryId == categoryId && b.Month == month && b.Year == year,
                 cancellationToken);
     }
 
