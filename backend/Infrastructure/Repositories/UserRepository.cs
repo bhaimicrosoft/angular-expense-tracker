@@ -30,7 +30,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> UpdateAsync(Guid id, string email, string fullName, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdateAsync(Guid id, string fullName, CancellationToken cancellationToken = default)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
         if (user is null)
@@ -38,7 +38,7 @@ public class UserRepository(AppDbContext context) : IUserRepository
             return false;
         }
 
-        user.Update(email, fullName);
+        user.UpdateFullName(fullName);
         await _context.SaveChangesAsync(cancellationToken);
         return true;
     }

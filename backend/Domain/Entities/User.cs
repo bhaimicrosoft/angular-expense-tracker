@@ -23,12 +23,10 @@ public sealed class User
         };
     }
 
-    public void Update(string email, string fullName)
+    public void UpdateFullName(string fullName)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(email);
         ArgumentException.ThrowIfNullOrWhiteSpace(fullName);
 
-        Email = email.Trim();
         FullName = fullName.Trim();
     }
 }

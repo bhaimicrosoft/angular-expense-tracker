@@ -14,7 +14,7 @@ public class UsersController(ISender sender) : ControllerBase
     public async Task<IActionResult> UpdateCurrentUser([FromBody] UpdateCurrentUserRequest request,
         CancellationToken cancellationToken)
     {
-        var command = new UpdateUserCommand(User.GetUserId(), request.Email, request.FullName);
+        var command = new UpdateUserCommand(User.GetUserId(), request.FullName);
         var updated = await sender.Send(command, cancellationToken);
         return updated ? NoContent() : NotFound();
     }
