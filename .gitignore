@@ -38,3 +38,9 @@ logs/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# DB Files
+**/*.db*
+backend/API/expense_tracker.db
+backend/API/expense_tracker.db-shm
+backend/API/expense_tracker.db-wal
