@@ -23,6 +23,7 @@ public static class DependencyInjection
         // Register repositories with a scoped lifetime (one instance per HTTP request)
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IExpenseRepository, ExpenseRepository>();
+        services.AddScoped<IIncomeRepository, IncomeRepository>();
         services.AddScoped<IBudgetRepository, BudgetRepository>();
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         // Register the JwtProvider

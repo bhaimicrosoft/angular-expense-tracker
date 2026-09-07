@@ -38,9 +38,9 @@ public class BudgetsController(ISender sender) : ControllerBase
     }
 
     [HttpGet("{categoryId:guid}/{year:int}/{month:int}")]
-    public async Task<IActionResult> GetBudget(Guid categoryId, int year, int month)
+    public async Task<IActionResult> GetBudget([FromRoute] Guid categoryId, [FromRoute] int year, [FromRoute] int month)
     {
-        var budget = await _sender.Send(new GetBudgetQuery(categoryId, year, month));
+        var budget = await _sender.Send(new GetBudgetQuery(categoryId, month, year));
 
         if (budget is null)
         {

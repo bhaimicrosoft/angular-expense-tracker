@@ -100,9 +100,9 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.MapOpenApi().AllowAnonymous();
 
-    app.MapScalarApiReference();
+    app.MapScalarApiReference().AllowAnonymous();
 }
 
 app.UseHttpsRedirection();
@@ -123,6 +123,12 @@ static string GetValidationErrorMessage(string fieldName, ModelError error)
         fieldName.Contains("expenseDateUtc", StringComparison.OrdinalIgnoreCase))
     {
         return "ExpenseDateUtc must be a valid UTC date/time in ISO 8601 format, for example 2026-09-06T07:15:00Z.";
+    }
+
+    if (fieldName.Contains("IncomeDateUtc", StringComparison.OrdinalIgnoreCase) ||
+        fieldName.Contains("incomeDateUtc", StringComparison.OrdinalIgnoreCase))
+    {
+        return "IncomeDateUtc must be a valid UTC date/time in ISO 8601 format, for example 2026-09-06T07:15:00Z.";
     }
 
     return string.IsNullOrWhiteSpace(error.ErrorMessage)
