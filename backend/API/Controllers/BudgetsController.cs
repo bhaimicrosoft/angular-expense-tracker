@@ -18,11 +18,44 @@ public class BudgetsController(ISender sender) : ControllerBase
         return Ok(new { Id = budgetId });
     }
 
+    [HttpPut("{budgetId:guid}")]
+    public async Task<IActionResult> UpdateBudget(Guid budgetId, [FromBody] UpdateBudgetCommand command)
+    {
+        if (budgetId != command.Id)
+        {
+            return BadRequest("Budget route ID must match payload ID.");
+        }
+
+        var updated = await _sender.Send(command);
+        return updated ? NoContent() : NotFound();
+    }
+
+    [HttpDelete("{budgetId:guid}/user/{userId:guid}")]
+    public async Task<IActionResult> DeleteBudget(Guid budgetId, Guid userId)
+    {
+        var deleted = await _sender.Send(new DeleteBudgetCommand(budgetId, userId));
+        return deleted ? NoContent() : NotFound();
+    }
+
     [HttpGet("{categoryId:guid}/{year:int}/{month:int}")]
     public async Task<IActionResult> GetBudget(Guid categoryId, int year, int month)
     {
         var budget = await _sender.Send(new GetBudgetQuery(categoryId, year, month));
 
-        return budget is not null ? Ok(budget) : NotFound();
+        if (budget is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(new
+        {
+            budget.Id,
+            budget.UserId,
+            budget.CategoryId,
+            Amount = budget.Limit.Amount,
+            Currency = budget.Limit.Currency,
+            budget.Month,
+            budget.Year
+        });
     }
 }

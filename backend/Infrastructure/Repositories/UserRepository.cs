@@ -29,4 +29,30 @@ public class UserRepository(AppDbContext context) : IUserRepository
         //save changes
         await _context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<bool> UpdateAsync(Guid id, string email, string fullName, CancellationToken cancellationToken = default)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        if (user is null)
+        {
+            return false;
+        }
+
+        user.Update(email, fullName);
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        if (user is null)
+        {
+            return false;
+        }
+
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
 }

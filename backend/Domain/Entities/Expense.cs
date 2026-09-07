@@ -30,4 +30,14 @@ public sealed class Expense
             ExpenseDateUtc = expenseDateUtc
         };
     }
+
+    public void Update(string title, Money amount, Guid categoryId, DateTime expenseDateUtc)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(title);
+
+        Title = title.Trim();
+        Amount = amount;
+        CategoryId = categoryId;
+        ExpenseDateUtc = expenseDateUtc;
+    }
 }

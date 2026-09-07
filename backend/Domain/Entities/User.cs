@@ -22,4 +22,13 @@ public sealed class User
             PasswordHash = passwordHash
         };
     }
+
+    public void Update(string email, string fullName)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(email);
+        ArgumentException.ThrowIfNullOrWhiteSpace(fullName);
+
+        Email = email.Trim();
+        FullName = fullName.Trim();
+    }
 }

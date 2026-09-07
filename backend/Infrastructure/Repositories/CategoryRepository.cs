@@ -18,4 +18,33 @@ public class CategoryRepository(AppDbContext context) : ICategoryRepository
         await context.Categories.AddAsync(category, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task<bool> UpdateAsync(Guid id, Guid userId, string name, string hexColor,
+        CancellationToken cancellationToken = default)
+    {
+        var category = await context.Categories.FirstOrDefaultAsync(c => c.Id == id && c.UserId == userId,
+            cancellationToken);
+        if (category is null)
+        {
+            return false;
+        }
+
+        category.Update(name, hexColor);
+        await context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
+
+    public async Task<bool> DeleteAsync(Guid id, Guid userId, CancellationToken cancellationToken = default)
+    {
+        var category = await context.Categories.FirstOrDefaultAsync(c => c.Id == id && c.UserId == userId,
+            cancellationToken);
+        if (category is null)
+        {
+            return false;
+        }
+
+        context.Categories.Remove(category);
+        await context.SaveChangesAsync(cancellationToken);
+        return true;
+    }
 }

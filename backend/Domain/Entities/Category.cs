@@ -22,4 +22,13 @@ public sealed class Category
             HexColor = hexColor.Trim()
         };
     }
+
+    public void Update(string name, string hexColor)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        ArgumentException.ThrowIfNullOrWhiteSpace(hexColor);
+
+        Name = name.Trim();
+        HexColor = hexColor.Trim();
+    }
 }
