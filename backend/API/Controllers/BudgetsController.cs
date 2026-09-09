@@ -2,6 +2,7 @@ using API.Contracts;
 using API.Extensions;
 using Application.Features.Budgets;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -31,6 +32,7 @@ public class BudgetsController(ISender sender) : ControllerBase
             new CreateResourceResponse(budgetId));
     }
 
+    
     [HttpPut("{budgetId:guid}")]
     public async Task<IActionResult> UpdateBudget(Guid budgetId, [FromBody] UpdateBudgetRequest request,
         CancellationToken cancellationToken)

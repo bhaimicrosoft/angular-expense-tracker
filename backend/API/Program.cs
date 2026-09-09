@@ -105,6 +105,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference().AllowAnonymous();
 }
 
+// Pipeline configuration
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");

@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure.Authentication;
 
-public class JwtProvider: IJwtProvider
+public class JwtProvider : IJwtProvider
 {
     private readonly IConfiguration _configuration;
 
@@ -16,18 +16,19 @@ public class JwtProvider: IJwtProvider
     {
         _configuration = configuration;
     }
-    
-    
+
+
     public string Generate(User user)
     {
         var secret = _configuration["JwtSettings:Secret"]!;
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-        
+
         var claims = new[]
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new Claim(JwtRegisteredClaimNames.Name, user.FullName),
         };
 
         var token = new JwtSecurityToken(

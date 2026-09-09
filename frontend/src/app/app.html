@@ -1,0 +1,61 @@
+<div class="min-h-screen overflow-hidden bg-background text-foreground">
+
+  <header class="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-xl">
+    <nav class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
+      <a routerLink="/" class="flex items-center gap-3">
+        <span class="grid h-11 w-11 place-items-center rounded-2xl bg-primary text-lg font-black text-primary-foreground shadow-lg">₹</span>
+        <span>
+          <span class="block text-base font-black leading-none">Expense Tracker</span>
+          <span class="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground">Slate Studio</span>
+        </span>
+      </a>
+
+      @if (authService.isAuthenticated()) {
+        <div class="hidden items-center gap-1 rounded-full border bg-card p-1 md:flex">
+          <a routerLink="/dashboard" routerLinkActive="bg-primary text-primary-foreground shadow-sm" class="rounded-full px-4 py-2 text-sm font-bold text-muted-foreground transition hover:text-foreground">Dashboard</a>
+          <a routerLink="/expenses" routerLinkActive="bg-primary text-primary-foreground shadow-sm" class="rounded-full px-4 py-2 text-sm font-bold text-muted-foreground transition hover:text-foreground">Expenses</a>
+          <a routerLink="/income" routerLinkActive="bg-primary text-primary-foreground shadow-sm" class="rounded-full px-4 py-2 text-sm font-bold text-muted-foreground transition hover:text-foreground">Income</a>
+          <a routerLink="/budgets" routerLinkActive="bg-primary text-primary-foreground shadow-sm" class="rounded-full px-4 py-2 text-sm font-bold text-muted-foreground transition hover:text-foreground">Budgets</a>
+          <a routerLink="/categories" routerLinkActive="bg-primary text-primary-foreground shadow-sm" class="rounded-full px-4 py-2 text-sm font-bold text-muted-foreground transition hover:text-foreground">Categories</a>
+          <a routerLink="/profile" routerLinkActive="bg-primary text-primary-foreground shadow-sm" class="rounded-full px-4 py-2 text-sm font-bold text-muted-foreground transition hover:text-foreground">Profile</a>
+        </div>
+      }
+
+      <div class="flex items-center gap-2">
+        <button type="button" (click)="toggleTheme()" [attr.aria-label]="themeLabel()" [title]="themeLabel()" class="grid size-10 place-items-center rounded-full border bg-card text-foreground shadow-sm transition hover:bg-accent">
+          <ng-icon [name]="themeIcon()" class="text-lg" />
+        </button>
+        @if (authService.isAuthenticated()) {
+          <button type="button" (click)="logout()" class="rounded-full bg-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-sm transition hover:scale-[1.02]">
+            Logout
+          </button>
+        } @else {
+          <a routerLink="/login" class="rounded-full border bg-card px-4 py-2 text-sm font-bold shadow-sm transition hover:bg-accent">Login</a>
+        }
+      </div>
+    </nav>
+  </header>
+
+  @if (authService.isAuthenticated()) {
+    <div class="sticky top-19 z-30 border-b bg-background/80 px-4 py-3 backdrop-blur-xl md:hidden">
+      <div class="mx-auto grid max-w-7xl grid-cols-6 gap-2 text-center text-xs font-bold">
+        <a routerLink="/dashboard" routerLinkActive="bg-primary text-primary-foreground" class="rounded-full border px-3 py-2 text-muted-foreground">Home</a>
+        <a routerLink="/expenses" routerLinkActive="bg-primary text-primary-foreground" class="rounded-full border px-3 py-2 text-muted-foreground">Spend</a>
+        <a routerLink="/income" routerLinkActive="bg-primary text-primary-foreground" class="rounded-full border px-3 py-2 text-muted-foreground">Earn</a>
+        <a routerLink="/budgets" routerLinkActive="bg-primary text-primary-foreground" class="rounded-full border px-3 py-2 text-muted-foreground">Budget</a>
+        <a routerLink="/categories" routerLinkActive="bg-primary text-primary-foreground" class="rounded-full border px-3 py-2 text-muted-foreground">Tags</a>
+        <a routerLink="/profile" routerLinkActive="bg-primary text-primary-foreground" class="rounded-full border px-3 py-2 text-muted-foreground">Me</a>
+      </div>
+    </div>
+  }
+
+  <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <router-outlet></router-outlet>
+  </main>
+
+  @if (notifications.notification(); as notification) {
+    <div [class]="notificationClass(notification.kind)">
+      {{ notification.message }}
+    </div>
+  }
+</div>
