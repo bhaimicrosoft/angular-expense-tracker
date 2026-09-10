@@ -22,29 +22,32 @@ public class CategoryRepository(AppDbContext context) : ICategoryRepository
     public async Task<bool> UpdateAsync(Guid id, Guid userId, string name, string hexColor,
         CancellationToken cancellationToken = default)
     {
-        var category = await context.Categories.FirstOrDefaultAsync(c => c.Id == id && c.UserId == userId,
-            cancellationToken);
-        if (category is null)
-        {
-            return false;
-        }
+        var normalizedId = NormalizeGuid(id);
+        var normalizedUserId = NormalizeGuid(userId);
+        var trimmedName = name.Trim();
+        var trimmedHexColor = hexColor.Trim();
 
-        category.Update(name, hexColor);
-        await context.SaveChangesAsync(cancellationToken);
-        return true;
+        var rowsAffected = await context.Database.ExecuteSqlInterpolatedAsync(
+            $@"UPDATE Categories
+               SET Name = {trimmedName}, HexColor = {trimmedHexColor}
+               WHERE lower(Id) = {normalizedId} AND lower(UserId) = {normalizedUserId}",
+            cancellationToken);
+
+        return rowsAffected > 0;
     }
 
     public async Task<bool> DeleteAsync(Guid id, Guid userId, CancellationToken cancellationToken = default)
     {
-        var category = await context.Categories.FirstOrDefaultAsync(c => c.Id == id && c.UserId == userId,
-            cancellationToken);
-        if (category is null)
-        {
-            return false;
-        }
+        var normalizedId = NormalizeGuid(id);
+        var normalizedUserId = NormalizeGuid(userId);
 
-        context.Categories.Remove(category);
-        await context.SaveChangesAsync(cancellationToken);
-        return true;
+        var rowsAffected = await context.Database.ExecuteSqlInterpolatedAsync(
+            $@"DELETE FROM Categories
+               WHERE lower(Id) = {normalizedId} AND lower(UserId) = {normalizedUserId}",
+            cancellationToken);
+
+        return rowsAffected > 0;
     }
+
+    private static string NormalizeGuid(Guid value) => value.ToString("D").ToLowerInvariant();
 }

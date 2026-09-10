@@ -1,0 +1,71 @@
+<section class="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+  <aside class="rounded-3xl border bg-card p-6 shadow-sm">
+    <p class="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">Spending lanes</p>
+    <h1 class="mt-3 text-3xl font-black">{{editingCategoryId() ? 'Edit Category' : 'Create Category'}}</h1>
+    <form  class="mt-6 space-y-4" (ngSubmit)="saveCategory()">
+      <label for="name" class="grid gap-2 text-sm font-semibold">
+        Name
+        <input
+          hlmInput
+          id="name"
+          name="name"
+          class="h-11 rounded-2xl px-4"
+          [ngModel]="form().name"
+          (ngModelChange)="patchForm({name: $event})"
+          placeholder="Food, Travel, Others"
+        />
+      </label>
+      <label for="hexColor" class="grid gap-2 text-sm font-semibold">
+        Accent Color
+        <input
+          hlmInput
+          id="hexColor"
+          name="hexColor"
+          class="h-11 rounded-2xl px-4"
+          [ngModel]="form().hexColor"
+          (ngModelChange)="patchForm({hexColor: $event})"
+        />
+      </label>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <button hlmBtn class="h-12 rounded-2xl font-bold" type="submit">{{ editingCategoryId() ? 'Update category' : 'Add category' }}</button>
+        @if (editingCategoryId()) {
+          <button hlmBtn variant="outline" class="h-12 rounded-2xl font-bold" type="button" (click)="resetForm()">Cancel edit</button>
+        }
+      </div>
+    </form>
+  </aside>
+  <section class="rounded-3xl border bg-card p-6 shadow-sm">
+    <div class="flex items-end justify-between gap-4">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-muted-foreground">Categories</p>
+        <h2 class="mt-3 text-3xl font-black">Your financial map</h2>
+      </div>
+      <span class="rounded-full bg-secondary px-4 py-2 text-sm font-bold">{{ categories().length }} active</span>
+    </div>
+
+    @if (categories().length) {
+      <div class="mt-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        @for (category of categories(); track category.id) {
+          <article class="group rounded-3xl border bg-background p-5 transition hover:-translate-y-1 hover:shadow-xl">
+            <div class="flex items-center gap-3">
+              <span class="h-12 w-12 rounded-2xl shadow-inner" [style.background]="category.hexColor"></span>
+              <div>
+                <h3 class="font-black">{{ category.name }}</h3>
+                <p class="text-sm text-muted-foreground">{{ category.hexColor }}</p>
+              </div>
+            </div>
+            <div class="mt-5 flex gap-2">
+              <button hlmBtn variant="outline" size="sm" type="button" (click)="editCategory(category)">Edit</button>
+              <button hlmBtn variant="destructive" size="sm" type="button" (click)="deleteCategory(category)">Delete</button>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="mt-6 rounded-2xl border border-dashed p-10 text-center text-muted-foreground">
+        Start with categories like Food, Travel, Bills, Learning, and Subscriptions.
+      </div>
+    }
+  </section>
+
+</section>

@@ -26,21 +26,35 @@ export class AuthService {
   );
   private readonly currentUserSignal = signal<UserResponse | null>(null);
 
- /* constructor() {
+  /* constructor() {
     localStorage.setItem(
       tokenKey,
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwMGIwMTVmZC1mMDRmLTQ3OTMtOGFmMC01MTgxMDU4Yzc1MTciLCJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJleHAiOjE3ODg3OTg0MzgsImlzcyI6IkV4cGVuc2VUcmFja2VyQVBJIiwiYXVkIjoiRXhwZW5zZVRyYWNrZXJDbGllbnQifQ.uuSL1PG7YiVe_w6qpJqSHglWKxn_fqiEffdhpXoNPno',
     );
   }*/
 
+  validToken(): string | null {
+    const token = this.tokenSignal();
+    if (!token) {
+      return null;
+    }
+
+    if (this.isTokenExpired(token)) {
+      this.clearToken();
+      return null;
+    }
+
+    return token;
+  }
+
   readonly currentUser = computed(() => {
     const token = this.tokenSignal();
-    if(!token || this.isTokenExpired(token)) {
+    if (!token || this.isTokenExpired(token)) {
       return null;
     }
 
     return this.currentUserSignal() ?? this.readUserFromToken(token);
-  })
+  });
 
   readonly token = this.tokenSignal.asReadonly();
   readonly isAuthenticated: Signal<boolean> = computed(() => {
