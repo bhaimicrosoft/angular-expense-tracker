@@ -54,13 +54,14 @@ type ExpenseSort = 'newest' | 'oldest' | 'highest' | 'lowest' | 'title';
   templateUrl: './expense.html',
 })
 export class Expense implements OnInit {
-  // services
+  //region Services
   private readonly authService: AuthService = inject(AuthService);
   private readonly categoryService: CategoryService = inject(CategoryService);
   private readonly expenseService: ExpenseService = inject(ExpenseService);
   private readonly notificationService: NotificationService = inject(NotificationService);
+  //endregion
 
-  // signals
+  //region Signals
   readonly categories = signal<CategoryResponse[]>([]);
   readonly expenses = signal<ExpenseResponse[]>([]);
   readonly editingExpenseId = signal<string | null>(null);
@@ -75,6 +76,7 @@ export class Expense implements OnInit {
     this.sortExpenses(this.applyFilters(filterByDateRange(this.expenses(), this.dateRange()))),
   );
   readonly formatDateValue = formatDateValue;
+  //endregion
 
   async ngOnInit(): Promise<void> {
     this.setCurrentMonth();
@@ -141,6 +143,7 @@ export class Expense implements OnInit {
     }
   }
 
+  // region Helpers
   private emptyForm(): ExpenseForm {
     return {
       title: '',
@@ -298,4 +301,5 @@ export class Expense implements OnInit {
   private async loadExpenses(): Promise<void> {
     this.expenses.set(await this.expenseService.loadByUser());
   }
+  //endregion
 }

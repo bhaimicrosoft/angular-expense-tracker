@@ -44,3 +44,11 @@ desktop.ini
 backend/API/expense_tracker.db
 backend/API/expense_tracker.db-shm
 backend/API/expense_tracker.db-wal
+
+# SQLite database files
+*.sqlite
+*.sqlite3
+*.sqlite-shm
+*.sqlite-wal
+*.sqlite-journal
+*.db-journal
