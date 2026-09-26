@@ -247,9 +247,16 @@ export class Expense implements OnInit {
   setCurrentMonth(): void {
     const now = new Date();
     this.dateRange.set({
-      start: new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10),
-      end: new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10),
+      start: this.formatLocalDate(new Date(now.getFullYear(), now.getMonth(), 1)),
+      end: this.formatLocalDate(new Date(now.getFullYear(), now.getMonth() + 1, 0)),
     });
+  }
+
+  private formatLocalDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 
   exportCsv(): void {

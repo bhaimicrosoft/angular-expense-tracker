@@ -19,7 +19,6 @@ import { getApiErrorMessage } from '@src/app/core/utils/api-error';
 import { HlmInputImports } from '@spartan-ng/helm/input';
 import { HlmButtonImports } from '@spartan-ng/helm/button';
 import { HlmNativeSelectImports } from '@spartan-ng/helm/native-select';
-import { CurrencyPipe } from '@angular/common';
 
 type IncomeForm = {
   title: string;
@@ -33,14 +32,7 @@ type IncomeSort = 'newest' | 'oldest' | 'highest' | 'lowest' | 'title';
 
 @Component({
   selector: 'app-income',
-  imports: [
-    FormsModule,
-    NgIcon,
-    HlmInputImports,
-    HlmButtonImports,
-    HlmNativeSelectImports,
-    CurrencyPipe,
-  ],
+  imports: [FormsModule, NgIcon, HlmInputImports, HlmButtonImports, HlmNativeSelectImports],
   providers: [
     provideIcons({
       lucideBanknoteArrowUp,

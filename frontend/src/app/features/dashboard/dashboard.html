@@ -1,0 +1,548 @@
+<section class="space-y-8">
+  <div class="overflow-hidden rounded-[2rem] border bg-card text-card-foreground shadow-2xl shadow-slate-950/5">
+    <div class="relative isolate px-6 py-8 sm:px-10 lg:px-12">
+      <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,--theme(--color-cyan-400/0.25),transparent_28rem),radial-gradient(circle_at_80%_20%,--theme(--color-violet-400/0.22),transparent_24rem)]"></div>
+      <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+        <div class="max-w-2xl">
+          <p class="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-bold uppercase tracking-[0.25em] text-primary">
+            <ng-icon name="lucideSparkles"/> Money command center
+          </p>
+          <h1 class="mt-4 text-4xl font-black tracking-tight sm:text-6xl">
+            Welcome back, <span class="text-primary">
+            {{firstName()}}
+          </span>
+          </h1>
+          <p class="mt-4 text-lg text-muted-foreground">
+            Track income, expenses, budgets, savings rate, and cash-flow health from one dashboard.
+          </p>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+          <button
+            class="h-12 rounded-full bg-emerald-500 px-6 font-bold text-white hover:bg-emerald-600 cursor-pointer"
+            type="button"
+            (click)="openQuickAdd('income')"
+          >
+            <ng-icon name="lucideBanknoteArrowUp" />
+            Add income
+          </button>
+
+          <button
+            class="h-12 rounded-full px-6 font-bold cursor-pointer bg-red-500 hover:bg-red-600 text-white"
+            type="button"
+            (click)="openQuickAdd('expense')"
+          >
+            <ng-icon name="lucideReceiptText" />
+            Add expense
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <section class="rounded-3xl border bg-card p-5 shadow-sm">
+    <div class="grid gap-4 md:grid-cols-[1fr_1fr_auto] md:items-end">
+      <label class="grid gap-2 text-sm font-semibold">
+        Dashboard from
+        <div
+          class="relative flex h-11 items-center rounded-2xl border bg-background px-4 text-foreground shadow-sm transition-colors hover:bg-accent/40"
+          (click)="openDatePicker(dashboardStartPicker)"
+        >
+          <span class="font-bold">{{ formatDateValue(dateRange().start) }}</span>
+          <input
+            #dashboardStartPicker
+            hlmInput
+            type="date"
+            [ngModel]="dateRange().start"
+            (ngModelChange)="patchDateRange({ start: stringValue($event) })"
+            name="dashboardStart"
+            class="absolute inset-y-1 right-1 h-9 w-11 cursor-pointer rounded-xl border-0 bg-transparent p-0 text-transparent shadow-none outline-none [color-scheme:inherit]"
+          />
+        </div>
+      </label>
+      <label class="grid gap-2 text-sm font-semibold">
+        Dashboard to
+        <div
+          class="relative flex h-11 items-center rounded-2xl border bg-background px-4 text-foreground shadow-sm transition-colors hover:bg-accent/40"
+          (click)="openDatePicker(dashboardEndPicker)"
+        >
+          <span class="font-bold">{{ formatDateValue(dateRange().end) }}</span>
+          <input
+            #dashboardEndPicker
+            hlmInput
+            type="date"
+            [ngModel]="dateRange().end"
+            (ngModelChange)="patchDateRange({ end: stringValue($event) })"
+            name="dashboardEnd"
+            class="absolute inset-y-1 right-1 h-9 w-11 cursor-pointer rounded-xl border-0 bg-transparent p-0 text-transparent shadow-none outline-none [color-scheme:inherit]"
+          />
+        </div>
+      </label>
+      <button
+        hlmBtn
+        variant="secondary"
+        class="h-11 rounded-2xl"
+        type="button"
+        (click)="setCurrentMonth()"
+      >
+        This month
+      </button>
+    </div>
+  </section>
+
+  <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+    @for (stat of stats(); track stat.label) {
+      <article
+        class="rounded-3xl border bg-card p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-xl"
+      >
+        <div class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-sm font-medium text-muted-foreground">{{ stat.label }}</p>
+            <p class="mt-3 text-3xl font-black">{{ stat.value }}</p>
+          </div>
+          <span class="grid size-11 place-items-center rounded-2xl bg-primary/10 text-primary">
+            <ng-icon [name]="stat.icon" />
+          </span>
+        </div>
+        <p class="mt-3 text-sm" [class]="stat.tone">{{ stat.hint }}</p>
+      </article>
+    }
+  </div>
+
+  <section class="overflow-hidden rounded-3xl border bg-card p-6 shadow-sm">
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div>
+        <p
+          class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.25em] text-muted-foreground"
+        >
+          <ng-icon name="lucideChartNoAxesColumnIncreasing" /> Income vs expense
+        </p>
+        <h2 class="mt-2 text-2xl font-black">6-month cash-flow comparison</h2>
+        <p class="mt-1 text-sm text-muted-foreground">
+          Green is money in, red is money out. Balance is {{ formatMoney(balance()) }}.
+        </p>
+      </div>
+      <div class="rounded-3xl border bg-background/70 px-5 py-4 text-right">
+        <p class="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
+          Savings rate
+        </p>
+        <p
+          class="mt-1 text-3xl font-black"
+          [class]="savingsRate() >= 0 ? 'text-emerald-500' : 'text-destructive'"
+        >
+          {{ savingsRate() }}%
+        </p>
+      </div>
+    </div>
+
+    <div class="mt-6 flex h-80 items-end gap-4 rounded-3xl border bg-background/60 p-5">
+      @for (point of cashFlowTrend(); track point.label) {
+        <div class="flex h-full flex-1 flex-col justify-end gap-3">
+          <div class="flex flex-1 items-end justify-center gap-2">
+            <div
+              class="w-1/2 rounded-t-2xl bg-emerald-500 shadow-lg shadow-emerald-500/20"
+              [style.height.%]="point.incomeHeight"
+              [title]="'Income ' + formatMoney(point.income)"
+            ></div>
+            <div
+              class="w-1/2 rounded-t-2xl bg-red-500 shadow-lg shadow-red-500/20"
+              [style.height.%]="point.expenseHeight"
+              [title]="'Expense ' + formatMoney(point.expense)"
+            ></div>
+          </div>
+          <div class="text-center">
+            <p class="text-xs font-black">{{ point.label }}</p>
+            <p class="text-[0.7rem] text-emerald-500">{{ compactMoney(point.income) }}</p>
+            <p class="text-[0.7rem] text-red-500">{{ compactMoney(point.expense) }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+
+  <div class="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+    <section class="overflow-hidden rounded-3xl border bg-card p-6 shadow-sm">
+      <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <p
+            class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.25em] text-muted-foreground"
+          >
+            <ng-icon name="lucideBanknoteArrowUp" /> Cash flow
+          </p>
+          <h2 class="mt-2 text-2xl font-black">Balance snapshot</h2>
+          <p class="mt-1 text-sm text-muted-foreground">
+            Selected-range income minus selected-range expenses.
+          </p>
+        </div>
+        <div class="rounded-3xl border bg-background/70 px-5 py-4 text-right">
+          <p class="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">Balance</p>
+          <p
+            class="mt-1 text-3xl font-black"
+            [class]="balance() >= 0 ? 'text-emerald-500' : 'text-destructive'"
+          >
+            {{ formatMoney(balance()) }}
+          </p>
+        </div>
+      </div>
+
+      <div class="mt-6 grid gap-4 md:grid-cols-3">
+        <div class="rounded-3xl border bg-emerald-500/10 p-5">
+          <div class="flex items-center justify-between">
+            <p class="font-bold text-emerald-600">Income</p>
+            <ng-icon name="lucideBanknoteArrowUp" class="text-emerald-600" />
+          </div>
+          <p class="mt-3 text-3xl font-black">{{ formatMoney(totalIncome()) }}</p>
+          <div class="mt-4 h-3 overflow-hidden rounded-full bg-background">
+            <div
+              class="h-full rounded-full bg-emerald-500"
+              [style.width.%]="cashFlowPercent(totalIncome())"
+            ></div>
+          </div>
+        </div>
+        <div class="rounded-3xl border bg-red-500/10 p-5">
+          <div class="flex items-center justify-between">
+            <p class="font-bold text-red-600">Expenses</p>
+            <ng-icon name="lucideReceiptText" class="text-red-600" />
+          </div>
+          <p class="mt-3 text-3xl font-black">{{ formatMoney(totalSpent()) }}</p>
+          <div class="mt-4 h-3 overflow-hidden rounded-full bg-background">
+            <div
+              class="h-full rounded-full bg-red-500"
+              [style.width.%]="cashFlowPercent(totalSpent())"
+            ></div>
+          </div>
+        </div>
+        <div class="rounded-3xl border bg-primary/10 p-5">
+          <div class="flex items-center justify-between">
+            <p class="font-bold text-primary">Runway</p>
+            <ng-icon name="lucideTarget" class="text-primary" />
+          </div>
+          <p class="mt-3 text-3xl font-black">
+            {{ formatMoney(Math.max(totalBudget() - totalSpent(), 0)) }}
+          </p>
+          <p class="mt-3 text-sm text-muted-foreground">Budget left this period</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="rounded-3xl border bg-card p-6 shadow-sm">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <p
+            class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.25em] text-muted-foreground"
+          >
+            <ng-icon name="lucideTrendingUp" /> Spending pace
+          </p>
+          <h2 class="mt-2 text-2xl font-black">Daily burn-rate projection</h2>
+        </div>
+        <span class="rounded-full bg-secondary px-4 py-2 text-sm font-bold">{{
+            trendDirection()
+          }}</span>
+      </div>
+      <div class="mt-6 grid gap-4 sm:grid-cols-3">
+        <div class="rounded-2xl border bg-background/60 p-4">
+          <p class="text-sm text-muted-foreground">Daily average</p>
+          <p class="mt-2 text-2xl font-black">{{ formatMoney(dailyAverage()) }}</p>
+        </div>
+        <div class="rounded-2xl border bg-background/60 p-4">
+          <p class="text-sm text-muted-foreground">Projected spend</p>
+          <p class="mt-2 text-2xl font-black">{{ formatMoney(projectedSpend()) }}</p>
+        </div>
+        <div class="rounded-2xl border bg-background/60 p-4">
+          <p class="text-sm text-muted-foreground">Biggest expense</p>
+          <p class="mt-2 truncate text-2xl font-black">
+            {{ biggestExpense()?.title ?? 'No data' }}
+          </p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  @if (budgetAlerts().length) {
+    <section
+      class="rounded-3xl border border-amber-500/30 bg-amber-50 p-5 text-amber-950 shadow-sm dark:bg-amber-950/30 dark:text-amber-100"
+    >
+      <div class="flex items-center gap-3">
+        <span class="grid size-11 place-items-center rounded-2xl bg-amber-500/15">
+          <ng-icon name="lucideBadgeAlert" />
+        </span>
+        <div>
+          <h2 class="text-xl font-black">Budget alerts</h2>
+          <p class="text-sm opacity-80">Categories close to crossing their monthly limit.</p>
+        </div>
+      </div>
+      <div class="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        @for (alert of budgetAlerts(); track alert.category.id) {
+          <div class="rounded-2xl border border-amber-500/20 bg-background/70 p-4">
+            <p class="font-black">{{ alert.category.name }}</p>
+            <p class="mt-1 text-sm opacity-80">{{ alert.message }}</p>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <div class="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+    <section class="rounded-3xl border bg-card p-6 shadow-sm">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <p
+            class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.25em] text-muted-foreground"
+          >
+            <ng-icon name="lucidePieChart" /> Breakdown
+          </p>
+          <h2 class="mt-2 text-2xl font-black">Category mix</h2>
+        </div>
+      </div>
+
+      @if (categoryBreakdown().length) {
+        <div class="mt-6 grid gap-6 md:grid-cols-[0.8fr_1.2fr] md:items-center">
+          <div
+            class="mx-auto grid size-52 place-items-center rounded-full shadow-inner"
+            [style.background]="categoryDonut()"
+          >
+            <div
+              class="grid size-32 place-items-center rounded-full border bg-card text-center shadow-sm"
+            >
+              <div>
+                <p class="text-xs font-bold text-muted-foreground">Spent</p>
+                <p class="text-xl font-black">{{ compactMoney(totalSpent()) }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="space-y-3">
+            @for (item of categoryBreakdown(); track item.id) {
+              <div class="rounded-2xl border bg-background/60 p-4">
+                <div class="mb-2 flex items-center justify-between gap-3">
+                  <span class="flex items-center gap-2 font-bold">
+                    <span class="size-3 rounded-full" [style.background]="item.color"></span>
+                    {{ item.name }}
+                  </span>
+                  <span class="text-sm font-black">{{ item.percent }}%</span>
+                </div>
+                <div class="h-2 overflow-hidden rounded-full bg-secondary">
+                  <div
+                    class="h-full rounded-full"
+                    [style.width.%]="item.percent"
+                    [style.background]="item.color"
+                  ></div>
+                </div>
+                <p class="mt-2 text-sm text-muted-foreground">
+                  {{ formatMoney(item.amount, item.currency) }}
+                </p>
+              </div>
+            }
+          </div>
+        </div>
+      } @else {
+        <div class="mt-6 rounded-2xl border border-dashed p-10 text-center text-muted-foreground">
+          No category spend in this date range yet.
+        </div>
+      }
+    </section>
+
+    <section class="rounded-3xl border bg-card p-6 shadow-sm">
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <p
+            class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.25em] text-muted-foreground"
+          >
+            <ng-icon name="lucideTarget" /> Guardrails
+          </p>
+          <h2 class="mt-2 text-2xl font-black">Budget vs actual</h2>
+        </div>
+        <a
+          routerLink="/budgets"
+          class="rounded-full border px-4 py-2 text-sm font-semibold hover:bg-accent"
+        >Manage</a
+        >
+      </div>
+
+      @if (budgetRows().length) {
+        <div class="mt-6 space-y-5">
+          @for (row of budgetRows(); track row.category.id) {
+            <div class="rounded-2xl border bg-background/60 p-4">
+              <div class="mb-2 flex items-center justify-between text-sm">
+                <span class="font-semibold">{{ row.category.name }}</span>
+                <span class="text-muted-foreground"
+                >{{ formatMoney(row.spent, row.currency) }} /
+                  {{ formatMoney(row.limit, row.currency) }}</span
+                >
+              </div>
+              <div class="h-3 overflow-hidden rounded-full bg-secondary">
+                <div
+                  class="h-full rounded-full transition-all"
+                  [class]="row.tone"
+                  [style.width.%]="row.percent"
+                ></div>
+              </div>
+              <p class="mt-2 text-xs font-bold text-muted-foreground">{{ row.percent }}% used</p>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="mt-6 rounded-2xl border border-dashed p-8 text-center text-muted-foreground">
+          Create categories and monthly budgets to unlock visual spending guardrails.
+        </div>
+      }
+    </section>
+  </div>
+
+  <section class="rounded-3xl border bg-card p-6 shadow-sm">
+    <div class="flex items-center justify-between">
+      <div>
+        <p
+          class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.25em] text-muted-foreground"
+        >
+          <ng-icon name="lucideActivity" /> Activity
+        </p>
+        <h2 class="mt-2 text-2xl font-black">Recent expenses</h2>
+      </div>
+      <a routerLink="/expenses" class="text-sm font-bold text-primary">View all</a>
+    </div>
+    @if (recentExpenses().length) {
+      <div class="mt-6 grid gap-3 md:grid-cols-2">
+        @for (expense of recentExpenses(); track expense.id) {
+          <div
+            class="flex items-center justify-between gap-4 rounded-2xl border bg-background/60 p-4"
+          >
+            <div>
+              <p class="font-bold">{{ expense.title }}</p>
+              <p class="text-sm text-muted-foreground">
+                {{ categoryName(expense.categoryId) }} ·
+                {{ formatDateValue(expense.expenseDateUtc) }}
+              </p>
+            </div>
+            <p class="font-black">{{ formatMoney(expense.amount, expense.currency) }}</p>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="mt-6 rounded-2xl border border-dashed p-8 text-center text-muted-foreground">
+        No expenses yet. Add your first one and start the story.
+      </div>
+    }
+  </section>
+</section>
+
+@if (quickAddMode()) {
+  <div
+    class="fixed inset-0 z-50 grid place-items-center bg-black/50 p-4 backdrop-blur-sm"
+    role="dialog"
+    aria-modal="true"
+  >
+    <section class="w-full max-w-xl rounded-3xl border bg-card p-6 text-card-foreground shadow-2xl">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <p
+            class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.25em] text-muted-foreground"
+          >
+            <ng-icon
+              [name]="quickAddMode() === 'income' ? 'lucideBanknoteArrowUp' : 'lucideReceiptText'"
+            />
+            Quick add
+          </p>
+          <h2 class="mt-2 text-2xl font-black">
+            Add {{ quickAddMode() === 'income' ? 'income' : 'expense' }}
+          </h2>
+        </div>
+        <button hlmBtn variant="ghost" size="icon" type="button" (click)="closeQuickAdd()">
+          <ng-icon name="lucideX" />
+        </button>
+      </div>
+
+      <form class="mt-6 space-y-4" (ngSubmit)="saveQuickAdd()">
+        <label class="grid gap-2 text-sm font-semibold">
+          Title
+          <input
+            hlmInput
+            name="quickTitle"
+            [ngModel]="quickAddForm().title"
+            (ngModelChange)="patchQuickAddForm({ title: stringValue($event) })"
+            required
+            class="h-11 rounded-2xl px-4"
+            placeholder="Salary, groceries, freelance..."
+          />
+        </label>
+        <div class="grid gap-4 sm:grid-cols-[1fr_0.55fr]">
+          <label class="grid gap-2 text-sm font-semibold">
+            Amount
+            <input
+              hlmInput
+              name="quickAmount"
+              type="number"
+              min="1"
+              step="0.01"
+              [ngModel]="quickAddForm().amount"
+              (ngModelChange)="patchQuickAddForm({ amount: numberValue($event) })"
+              required
+              class="h-11 rounded-2xl px-4"
+            />
+          </label>
+          <label class="grid gap-2 text-sm font-semibold">
+            Currency
+            <input
+              hlmInput
+              name="quickCurrency"
+              maxlength="3"
+              [ngModel]="quickAddForm().currency"
+              (ngModelChange)="patchQuickAddForm({ currency: stringValue($event) })"
+              required
+              class="h-11 rounded-2xl px-4 uppercase"
+            />
+          </label>
+        </div>
+
+        <label class="grid gap-2 text-sm font-semibold">
+          Category
+          <hlm-native-select
+            [ngModel]="quickAddForm().categoryId"
+            (ngModelChange)="patchQuickAddForm({ categoryId: stringValue($event) })"
+            name="quickCategory"
+            [selectClass]="'h-11 rounded-2xl px-4 bg-background text-foreground'"
+          >
+            <option hlmNativeSelectOption value="" disabled>Choose category</option>
+            @for (category of categories(); track category.id) {
+              <option hlmNativeSelectOption [value]="category.id">{{ category.name }}</option>
+            }
+          </hlm-native-select>
+        </label>
+
+        <label class="grid gap-2 text-sm font-semibold">
+          Date
+          <div
+            class="relative flex h-11 items-center rounded-2xl border bg-background px-4 text-foreground shadow-sm transition-colors hover:bg-accent/40"
+            (click)="openDatePicker(quickDatePicker)"
+          >
+            <span class="font-bold">{{ formatDateValue(quickAddForm().date) }}</span>
+            <input
+              #quickDatePicker
+              hlmInput
+              name="quickDate"
+              type="date"
+              [ngModel]="quickAddForm().date"
+              (ngModelChange)="patchQuickAddForm({ date: stringValue($event) })"
+              required
+              class="absolute inset-y-1 right-1 h-9 w-11 cursor-pointer rounded-xl border-0 bg-transparent p-0 text-transparent shadow-none outline-none [color-scheme:inherit]"
+            />
+          </div>
+        </label>
+
+        <div class="grid gap-3 sm:grid-cols-2">
+          <button hlmBtn class="h-12 rounded-2xl font-bold" type="submit">
+            Save {{ quickAddMode() === 'income' ? 'income' : 'expense' }}
+          </button>
+          <button
+            hlmBtn
+            variant="outline"
+            class="h-12 rounded-2xl font-bold"
+            type="button"
+            (click)="closeQuickAdd()"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </section>
+  </div>
+}
